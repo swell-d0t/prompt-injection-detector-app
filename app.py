@@ -1,5 +1,4 @@
 
-App · PY
 import pandas as pd
 import streamlit as st
 import torch
