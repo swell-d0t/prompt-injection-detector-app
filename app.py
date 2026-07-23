@@ -6,9 +6,7 @@ import joblib
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizerFast
 from sentence_transformers import SentenceTransformer
  
-# ============================================================
 # CONFIG
-# ============================================================
 DISTILBERT_REPO = "swell-d0t/prompt-injection-distilbert-v2"  # v2: trained on Tensor Trust + xTRam1
 RESULTS_CSV = "mindgard_results.csv" 
  
@@ -37,10 +35,21 @@ EMBEDDING_MODELS = {
 }
  
 st.set_page_config(page_title="Prompt Injection Detector", layout="wide")
- 
-# ============================================================
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+h1, h2, h3 {
+    font-family: 'IBM Plex Mono', monospace !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # MODEL LOADING (use of cache; model only loads once per session)
-# ============================================================
+
 @st.cache_resource
 def load_distilbert():
     tokenizer = DistilBertTokenizerFast.from_pretrained(DISTILBERT_REPO)
@@ -93,17 +102,13 @@ def predict_embedding_classifier(text, model, embedder):
     return pred_label, confidence
  
  
-# ============================================================
 # APP LAYOUT
-# ============================================================
 st.title(" Prompt Injection Detector")
 st.caption("Group 5C — AI4ALL Ignite project: Adversarial Robustness of Transformer-Based Prompt Injection Detectors")
  
 tab1, tab2 = st.tabs(["Test the Detector", "Robustness Dashboard"])
  
-# ------------------------------------------------------------
 # TAB 1: Interactive detector with model selector
-# ------------------------------------------------------------
 with tab1:
     st.subheader("Test a prompt:")
  
@@ -149,9 +154,7 @@ with tab1:
             else:
                 st.metric("Prediction", label_map[label])
  
-# ------------------------------------------------------------
 # TAB 2: Robustness dashboard (DistilBERT v2 results)
-# ------------------------------------------------------------
 with tab2:
     st.subheader("Adversarial robustness on the Mindgard evasion dataset")
     st.write("Detection rate per evasion technique for DistilBERT v2 (trained on Tensor Trust + xTRam1).")
@@ -170,4 +173,3 @@ with tab2:
             st.bar_chart(chart_df)
         st.markdown("**Full results table**")
         st.dataframe(results, use_container_width=True)
- 
