@@ -65,3 +65,9 @@ Extend the "does training data diversity fix vulnerabilities better than preproc
 
 ### Individual:
 DistilBERT: 
+Close the remaining word-substitution attack gap (BAE, PWWS, TextFooler, Bert-Attack, etc. — still evaded at low but nonzero rates) by fine-tuning directly on adversarially-perturbed training examples, rather than relying on training-data diversity alone.
+- Replace the hand-built homoglyph map with a complete confusables mapping table (e.g. via the `confusable_homoglyphs` package), since the current map only covers common Cyrillic/Greek lookalikes and misses less frequent ones.
+- Re-run training with a fixed `PYTHONHASHSEED` to eliminate the run-to-run variance observed from Python's non-deterministic `set()` ordering, for more reproducible benchmarking.
+- Move from a single train/test split to k-fold cross-validation for a more robust estimate of model performance, rather than relying on one fixed split.
+- Apply dynamic quantization to the deployed model to reduce inference latency for users interacting with the live app, without materially affecting accuracy.
+- Extend generalization testing beyond HackAPrompt to at least one additional independently sourced attack dataset, to build more confidence that the Tensor Trust retraining genuinely improved real-world robustness rather than overfitting to that specific dataset's style.
